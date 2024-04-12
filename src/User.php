@@ -89,23 +89,29 @@ class User
         return $this;
     }
 
-    public function can(string $obj, string $action)
+    public function can(string $permission)
     {
-        if (isset($this->permissions['*']) && $this->permissions['*']) {
+        if (in_array("*", $this->permissions)) {
             return true;
         }
 
-        if (isset($this->permissions[$obj]['*']) && $this->permissions[$obj]['*']) {
+        if (in_array($permission, $this->permissions)) {
             return true;
         }
 
-        if (isset($this->permissions[$obj][$action]) && $this->permissions[$obj][$action]) {
-            return true;
+        //split $permission by :
+        $parts = explode(":", $permission);
+
+        while (count($parts) > 1) {
+            array_pop($parts);
+            if (in_array(implode(":", $parts) . ":*", $this->permissions)) {
+                return true;
+            }
         }
 
         foreach ($this->roles as $role) {
             $role = $this->rbac->getRole($role);
-            if ($role->can($obj, $action)) {
+            if ($role->can($permission)) {
                 return true;
             }
         }
