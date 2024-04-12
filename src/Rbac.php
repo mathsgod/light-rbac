@@ -4,8 +4,8 @@ namespace Light\Rbac;
 
 class Rbac
 {
-    public $roles = null;
-    public $users = null;
+    protected $roles = null;
+    protected $users = null;
 
     public function __construct()
     {
@@ -62,6 +62,4 @@ class Rbac
     {
         return $this->users->get($name);
     }
-
-
 }
