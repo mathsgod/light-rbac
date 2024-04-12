@@ -1,0 +1,16 @@
+{
+    "name": "mathsgod/light-rbac",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Raymond Chong",
+            "email": "mathsgod@yahoo.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Light\\Rbac\\": "src/"
+        }
+    },
+    "require": {}
+}
