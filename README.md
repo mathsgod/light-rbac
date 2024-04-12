@@ -49,6 +49,31 @@ if ($user->can('post:read')) {
 }
 ```
 
+### Asterisk Permission
+
+You can use the asterisk `*` to represent all permissions.
+
+```php
+$role = $rbac->addRole('admin');
+$role->addPermission('*');
+
+if ($role->can('post:read')) {
+    echo 'Admin can read posts.';
+}
+```
+
+You can also use the asterisk 'resource:*' to represent all permissions for a specific resource.
+
+```php
+$role = $rbac->addRole('admin');
+$role->addPermission('post:*');
+
+if ($role->can('post:read')) {
+    echo 'Admin can read posts.';
+}
+```
+
+
 ### Checking Roles
 
 To check if a user has a certain role, use the `hasRole` method of the `User` class.
