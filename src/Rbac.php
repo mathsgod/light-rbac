@@ -57,4 +57,11 @@ class Rbac
     {
         $this->users->remove($name);
     }
+
+    public function getUser(string $name)
+    {
+        return $this->users->get($name);
+    }
+
+
 }

@@ -28,4 +28,14 @@ final class UserTest extends TestCase
         $this->assertEquals("!@#$%^&*()", $user->getName());
     }
     // END: Additional test cases
+
+    public function testRemoveUser(): void
+    {
+        $rbac = new Light\Rbac\Rbac;
+        $user = $rbac->addUser("admin");
+        $rbac->removeUser("admin");
+        $this->assertNull($rbac->getUser("admin"));
+    }
+
+    
 }
