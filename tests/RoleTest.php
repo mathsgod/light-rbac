@@ -17,8 +17,8 @@ final class RoleTest extends TestCase
     public function testAddRoleWithEmptyName(): void
     {
         $rbac = new Light\Rbac\Rbac;
-        $role = $rbac->addRole("");
-        $this->assertEquals("", $role->getName());
+        $this->expectException(Exception::class);
+        $rbac->addRole("");
     }
 
     public function testAddRoleWithSpecialCharacters(): void

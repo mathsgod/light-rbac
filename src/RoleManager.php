@@ -25,6 +25,11 @@ class RoleManager
 
     public function add(string $name)
     {
+        //empty name
+        if ($name == "") {
+            throw new \Exception("Role name cannot be empty");
+        }
+
         $this->roles[$name] = new Role($this->rbac, $name);
     }
 

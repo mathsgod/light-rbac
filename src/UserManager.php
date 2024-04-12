@@ -14,6 +14,10 @@ class UserManager
 
     public function add(string $name)
     {
+        if ($name == "") {
+            throw new \Exception("User name cannot be empty");
+        }
+
         $this->users[$name] = new User($this->rbac, $name);
     }
 
