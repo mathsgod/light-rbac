@@ -65,11 +65,11 @@ final class RoleTest extends TestCase
         $rbac = new Light\Rbac\Rbac;
         $role = $rbac->addRole("admin");
         $role->addPermission("*"); // all permissions
-        $this->assertTrue($role->can("post", "create"));
+        $this->assertTrue($role->can("postcreate"));
 
         $editor = $rbac->addRole("editor");
-        $editor->addPermission("post");
+        $editor->addPermission("post:*");
 
-        $this->assertTrue($editor->can("post", "create"));
+        $this->assertTrue($editor->can("post:create"));
     }
 }
