@@ -25,6 +25,8 @@ First, create an instance of the `Rbac` class. Then, use the `addUser` and `addR
 $rbac = new \Light\Rbac\Rbac();
 $rbac->addRole('admin');
 $rbac->addUser('John Doe', ['admin']);
+
+$admin = $rbac->getRole('admin');
 ```
 
 
