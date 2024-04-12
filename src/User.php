@@ -90,6 +90,10 @@ class User
 
     public function can(string $obj, string $action)
     {
+        if (isset($this->permissions['*']) && $this->permissions['*']) {
+            return true;
+        }
+
         if (isset($this->permissions[$obj]['*']) && $this->permissions[$obj]['*']) {
             return true;
         }

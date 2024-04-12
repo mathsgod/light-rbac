@@ -59,4 +59,17 @@ final class RoleTest extends TestCase
         $this->assertEquals(["post:create", "post:read", "post:update", "post:delete"], $role->getPermissions());
         $this->assertTrue($role->can("post", "create"));
     }
+
+    public function testAstriskPermissions(): void
+    {
+        $rbac = new Light\Rbac\Rbac;
+        $role = $rbac->addRole("admin");
+        $role->addPermission("*"); // all permissions
+        $this->assertTrue($role->can("post", "create"));
+
+        $editor = $rbac->addRole("editor");
+        $editor->addPermission("post");
+
+        $this->assertTrue($editor->can("post", "create"));
+    }
 }
