@@ -32,9 +32,9 @@ class User
         return $roles;
     }
 
-    public function addPermission(string $obj, string $action)
+    public function addPermission(string $action)
     {
-        $this->permissions[$obj][$action] = true;
+        $this->permissions[] = $action;
     }
 
     public function is(string $role)

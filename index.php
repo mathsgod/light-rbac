@@ -9,9 +9,7 @@ $rbac = new Light\Rbac\Rbac;
 $admin = $rbac->addRole("admin");
 $admin->addChild("editor");
 
-$rbac->getRole("editor")->addPermission("post", "create");
+$rbac->getRole("editor")->addPermission("post:create");
 
-
-
-print_R($admin->can("post", "create"));
+print_R($admin->can("post:create"));
 

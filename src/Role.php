@@ -24,22 +24,25 @@ class Role
         return $this->name;
     }
 
-    public function can(string $obj, string $action)
+    public function can(string $action)
     {
-        if (isset($this->permissions['*']) && $this->permissions['*']) {
+        if (in_array("*", $this->permissions)) {
             return true;
         }
 
-        if (isset($this->permissions[$obj]['*']) && $this->permissions[$obj]['*']) {
+        if (in_array($action, $this->permissions)) {
             return true;
         }
 
-        if (isset($this->permissions[$obj][$action]) && $this->permissions[$obj][$action]) {
+        //split $action into resource and action
+        $parts = explode(":", $action, 2);
+
+        if (in_array($parts[0] . ":*", $this->permissions)) {
             return true;
         }
 
         foreach ($this->getChild() as $child) {
-            if ($child->can($obj, $action)) {
+            if ($child->can($action)) {
                 return true;
             }
         }
@@ -47,31 +50,22 @@ class Role
         return false;
     }
 
-    public function addPermission(string $obj, string $action = '*')
+    public function addPermission(string $permission)
     {
-        $this->permissions[$obj][$action] = true;
+        $this->permissions[] = $permission;
     }
 
     public function getPermissions(bool $children = true)
     {
-        $permissions = [];
-        foreach ($this->permissions as $obj => $actions) {
-            foreach ($actions as $action => $true) {
-                $permissions[] = $obj . ':' . $action;
-            }
-        }
+        $permissions = $this->permissions;
 
         if ($children) {
             foreach ($this->getChild() as $child) {
                 foreach ($child->getPermissions() as $permission) {
-                    if (!in_array($permission, $permissions)) {
-                        $permissions[] = $permission;
-                    }
+                    $permissions[] = $permission;
                 }
             }
         }
-
-
 
         return array_values($permissions);
     }
