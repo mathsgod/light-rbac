@@ -27,7 +27,9 @@ class User
     {
         $roles = [];
         foreach ($this->roles as $role) {
-            $roles[] = $this->rbac->getRole($role);
+            if ($role = $this->rbac->getRole($role)) {
+                $roles[] = $role;
+            }
         }
         return $roles;
     }
@@ -67,7 +69,7 @@ class User
             return $this;
         }
 
-        if ($this->rbac->getRole($role) === null) {
+        if (!$this->rbac->hasRole($role)) {
             //auto create role
             $this->rbac->addRole($role);
         }
