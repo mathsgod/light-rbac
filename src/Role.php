@@ -50,6 +50,11 @@ class Role
         return false;
     }
 
+    public function hasPermission(string $permission)
+    {
+        return in_array($permission, $this->permissions);
+    }
+
     public function addPermission(string $permission)
     {
         $this->permissions[] = $permission;
