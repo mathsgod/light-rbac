@@ -17,6 +17,7 @@ The `Rbac` class is the main class of the system. It manages roles and users.
 - `addRole(string $name)`: Adds a role with the given name to the system. If the role already exists, it returns the existing role.
 - `getRole(string $name)`: Returns the role with the given name.
 
+
 ## Usage
 
 First, create an instance of the `Rbac` class. Then, use the `addUser` and `addRole` methods to add users and roles to the system. Use the `getRole` method to retrieve a role by its name.
