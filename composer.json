@@ -2,7 +2,11 @@
     "name": "mathsgod/light-rbac",
     "description": "A simple and lightweight role-based access control library for PHP.",
     "homepage": "https://github.com/mathsgod/light-rbac",
-    "keywords": ["rbac", "role-based access control", "php"],
+    "keywords": [
+        "rbac",
+        "role-based access control",
+        "php"
+    ],
     "license": "MIT",
     "authors": [
         {
@@ -17,5 +21,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^9.6"
+    },
+    "scripts": {
+        "test": "phpunit tests"
     }
 }
