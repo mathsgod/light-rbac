@@ -43,7 +43,7 @@ class Role
         return false;
     }
 
-    public function addPermission(string $obj, string $action)
+    public function addPermission(string $obj, string $action = '*')
     {
         $this->permissions[$obj][$action] = true;
     }
