@@ -6,8 +6,9 @@ require_once 'vendor/autoload.php';
 
 $rbac = new Rbac;
 $rbac = new Light\Rbac\Rbac;
-$admin = $rbac->addRole("admin");
-$admin->addPermission("user.create");
+$users = $rbac->addRole("users");
+$users->addPermission("post:1:*");
 
-print_R($admin->can("user.create"));
+print_R($users->can("post:edit"));
+
 

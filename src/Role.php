@@ -34,12 +34,16 @@ class Role
             return true;
         }
 
-        //split $action into resource and action
-        $parts = explode(":", $permission, 2);
+        //split $permission by :
+        $parts = explode(":", $permission);
 
-        if (in_array($parts[0] . ":*", $this->permissions)) {
-            return true;
+        while (count($parts) > 1) {
+            array_pop($parts);
+            if (in_array(implode(":", $parts) . ":*", $this->permissions)) {
+                return true;
+            }
         }
+
 
         foreach ($this->getChild() as $child) {
             if ($child->can($permission)) {
