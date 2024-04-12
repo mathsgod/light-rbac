@@ -197,7 +197,6 @@ class Role
     }
 
 
-
     function __debugInfo()
     {
         return [

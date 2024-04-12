@@ -13,8 +13,12 @@ $admin->addPermission("user", "create");
 $admin->addPermission("user", "update");
 
 $admin->addChild("everyone");
+$admin->addChild("everyone_1");
 
-$user = $rbac->addUser("admin")->addRole("administrators");;
+$user = $rbac->addUser("admin", ["administrators"]);
+
+
+print_r($rbac->getRoles());
 
 
     /* 

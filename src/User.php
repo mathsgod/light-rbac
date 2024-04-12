@@ -37,15 +37,17 @@ class User
         $this->permissions[$obj][$action] = true;
     }
 
-    public function is(string $role)
+    public function is(string $role, $inherit = false)
     {
         if (in_array($role, $this->roles)) {
             return true;
         }
 
-        foreach ($this->getRoles() as $r) {
-            if ($r->hasDescendant($role)) {
-                return true;
+        if ($inherit) {
+            foreach ($this->getRoles() as $r) {
+                if ($r->hasDescendant($role)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -59,6 +61,11 @@ class User
 
         if (in_array($role, $this->roles)) {
             return $this;
+        }
+
+        if ($this->rbac->getRole($role) === null) {
+            //auto create role
+            $this->rbac->addRole($role);
         }
 
         $this->roles[] = $role;

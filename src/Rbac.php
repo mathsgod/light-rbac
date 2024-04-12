@@ -13,12 +13,16 @@ class Rbac
         $this->users = new UserManager($this);
     }
 
-    public function addUser(string $name): User
+    public function addUser(string $name, array $roles = []): User
     {
         if (!$this->users->has($name)) {
             $this->users->add($name);
         }
-        return $this->users->get($name);
+        $user = $this->users->get($name);
+        foreach ($roles as $role) {
+            $user->addRole($role);
+        }
+        return $user;
     }
 
     public function addRole(string $name)
@@ -44,9 +48,13 @@ class Rbac
         $this->roles->remove($name);
     }
 
-
     public function getUsers()
     {
         return $this->users->all();
+    }
+
+    public function removeUser(string $name)
+    {
+        $this->users->remove($name);
     }
 }
