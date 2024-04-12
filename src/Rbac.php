@@ -67,4 +67,22 @@ class Rbac
     {
         return $this->users->get($name);
     }
+
+    public function getPermissions()
+    {
+        $permissions = [];
+        foreach ($this->roles->all() as $role) {
+            foreach ($role->getPermissions() as $permission) {
+                $permissions[] = $permission;
+            }
+        }
+
+        foreach ($this->users->all() as $user) {
+            foreach ($user->getPermissions() as $permission) {
+                $permissions[] = $permission;
+            }
+        }
+
+        return array_values(array_unique($permissions));
+    }
 }

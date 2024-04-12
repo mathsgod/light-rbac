@@ -35,6 +35,7 @@ class User
     public function addPermission(string $action)
     {
         $this->permissions[] = $action;
+        $this->permissions = array_unique($this->permissions);
     }
 
     public function is(string $role)
@@ -113,12 +114,7 @@ class User
 
     public function getPermissions(bool $includeRoles = true)
     {
-        $permissions = [];
-        foreach ($this->permissions as $obj => $actions) {
-            foreach ($actions as $action => $true) {
-                $permissions[] = "$obj:$action";
-            }
-        }
+        $permissions = $this->permissions;
 
         if ($includeRoles) {
             foreach ($this->getRoles() as $role) {
@@ -128,7 +124,7 @@ class User
             }
         }
 
-        return $permissions;
+        return array_values(array_unique($permissions));
     }
 
     public function __debugInfo()

@@ -24,25 +24,25 @@ class Role
         return $this->name;
     }
 
-    public function can(string $action)
+    public function can(string $permission)
     {
         if (in_array("*", $this->permissions)) {
             return true;
         }
 
-        if (in_array($action, $this->permissions)) {
+        if (in_array($permission, $this->permissions)) {
             return true;
         }
 
         //split $action into resource and action
-        $parts = explode(":", $action, 2);
+        $parts = explode(":", $permission, 2);
 
         if (in_array($parts[0] . ":*", $this->permissions)) {
             return true;
         }
 
         foreach ($this->getChild() as $child) {
-            if ($child->can($action)) {
+            if ($child->can($permission)) {
                 return true;
             }
         }
@@ -53,6 +53,7 @@ class Role
     public function addPermission(string $permission)
     {
         $this->permissions[] = $permission;
+        $this->permissions = array_unique($this->permissions);
     }
 
     public function getPermissions(bool $children = true)
@@ -67,7 +68,7 @@ class Role
             }
         }
 
-        return array_values($permissions);
+        return array_values(array_unique($permissions));
     }
 
     public function addChild(Role|string $child)
