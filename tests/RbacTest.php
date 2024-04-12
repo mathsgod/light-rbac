@@ -15,10 +15,15 @@ final class RbacTest extends TestCase
         $this->assertEquals("admin", $role->getName());
     }
 
-/*     public function testAddRoleWithPermissions(): void
+    public function testGetPermissions()
     {
         $rbac = new Light\Rbac\Rbac;
-        $role = $rbac->addRole("admin", ["create", "read", "update", "delete"]);
-        $this->assertEquals(["create", "read", "update", "delete"], $role->getPermissions());
-    } */
+        $role = $rbac->addRole("admin");
+        $role->addPermission("post:create");
+        $role->addPermission("post:read");
+        $role->addPermission("post:update");
+        $role->addPermission("post:delete");
+
+        $this->assertEquals(["post:create", "post:read", "post:update", "post:delete"], $rbac->getPermissions());
+    }
 }
