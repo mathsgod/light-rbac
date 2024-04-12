@@ -37,5 +37,20 @@ final class UserTest extends TestCase
         $this->assertNull($rbac->getUser("admin"));
     }
 
-    
+    public function testAddRoleWithPermissions(): void
+    {
+        $rbac = new Light\Rbac\Rbac;
+        $role = $rbac->addRole("administrators");
+        $role->addPermission("user", "create");
+        $role->addPermission("user", "read");
+        $role->addPermission("user", "update");
+        $role->addPermission("user", "delete");
+
+        $rbac->addUser("admin", ["administrators"]);
+
+        $user = $rbac->getUser("admin");
+        $this->assertTrue($user->is("administrators"));
+
+        $this->assertTrue($user->can("user", "create"));
+    }
 }

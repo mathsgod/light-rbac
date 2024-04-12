@@ -26,3 +26,27 @@ $rbac = new \Light\Rbac\Rbac();
 $rbac->addRole('admin');
 $rbac->addUser('John Doe', ['admin']);
 ```
+
+
+### Permissions
+
+Permissions can be assigned to roles. A permission is a string that represents a certain action or resource. For example, `read`, `write`, `delete`, etc.
+
+```php
+$role = $rbac->addRole('admin');
+$role->addPermission('post','read');
+$role->addPermission('post','write');
+```
+
+### Checking Permissions
+
+To check if a user has a certain permission, use the `can` method of the `User` class.
+
+```php
+$user = $rbac->addUser('John Doe', ['admin']);
+if ($user->can('post', 'read')) {
+    echo 'John Doe can read posts.';
+}
+```
+
+
