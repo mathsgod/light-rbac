@@ -53,4 +53,41 @@ final class UserTest extends TestCase
 
         $this->assertTrue($user->can("user", "create"));
     }
+
+    public function testHasRole(): void
+    {
+        $rbac = new Light\Rbac\Rbac;
+        $role = $rbac->addRole("administrators");
+        $rbac->addUser("admin", ["administrators"]);
+
+        $user = $rbac->getUser("admin");
+        $this->assertTrue($user->hasRole("administrators"));
+    }
+
+    public function testIsRole(): void
+    {
+        $rbac = new Light\Rbac\Rbac;
+        $role = $rbac->addRole("administrators");
+        $role->addChild("editors");
+
+        $rbac->addUser("admin", ["administrators"]);
+
+        $user = $rbac->getUser("admin");
+        $this->assertTrue($user->is("administrators"));
+        $this->assertTrue($user->is("editors"));
+    }
+
+    public function testHierarchyRolePermissions(): void
+    {
+        $rbac = new Light\Rbac\Rbac;
+        $admin = $rbac->addRole("administrators");
+        $admin->addChild("editors");
+
+        $rbac->getRole("editors")->addPermission("post", "create");
+
+        $rbac->addUser("admin", ["administrators"]);
+
+        $user = $rbac->getUser("admin");
+        $this->assertTrue($user->can("post", "create"));
+    }
 }

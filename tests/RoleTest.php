@@ -37,6 +37,17 @@ final class RoleTest extends TestCase
         $this->assertNull($rbac->getRole("admin"));
     }
 
+    public function testHierarchyRole(): void
+    {
+        $rbac = new Light\Rbac\Rbac;
+        $admin = $rbac->addRole("admin");
+        $admin->addChild("editor");
+
+        $rbac->getRole("editor")->addPermission("post", "create");
+
+        $this->assertTrue($admin->can("post", "create"));
+    }
+
     public function testPermissions(): void
     {
         $rbac = new Light\Rbac\Rbac;
@@ -47,7 +58,5 @@ final class RoleTest extends TestCase
         $role->addPermission("post", "delete");
         $this->assertEquals(["post:create", "post:read", "post:update", "post:delete"], $role->getPermissions());
         $this->assertTrue($role->can("post", "create"));
-
-        
     }
 }

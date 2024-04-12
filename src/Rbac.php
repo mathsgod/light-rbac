@@ -48,6 +48,11 @@ class Rbac
         $this->roles->remove($name);
     }
 
+    public function hasRole(string $name)
+    {
+        return $this->roles->has($name);
+    }
+
     public function getUsers()
     {
         return $this->users->all();

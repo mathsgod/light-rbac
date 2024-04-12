@@ -37,20 +37,23 @@ class User
         $this->permissions[$obj][$action] = true;
     }
 
-    public function is(string $role, $inherit = false)
+    public function is(string $role)
     {
         if (in_array($role, $this->roles)) {
             return true;
         }
 
-        if ($inherit) {
-            foreach ($this->getRoles() as $r) {
-                if ($r->hasDescendant($role)) {
-                    return true;
-                }
+        foreach ($this->getRoles() as $r) {
+            if ($r->hasDescendant($role)) {
+                return true;
             }
         }
         return false;
+    }
+
+    public function hasRole(string $role)
+    {
+        return in_array($role, $this->roles);
     }
 
     public function addRole(Role|string $role)

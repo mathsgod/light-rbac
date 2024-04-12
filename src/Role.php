@@ -57,14 +57,17 @@ class Role
             }
         }
 
-
         if ($children) {
             foreach ($this->getChild() as $child) {
                 foreach ($child->getPermissions() as $permission) {
-                    $permissions[] = $permission;
+                    if (!in_array($permission, $permissions)) {
+                        $permissions[] = $permission;
+                    }
                 }
             }
         }
+
+
 
         return array_values($permissions);
     }
@@ -83,13 +86,13 @@ class Role
             return;
         }
 
-        if (!$this->rbac->roles->has($child)) {
+        if (!$this->rbac->hasRole($child)) {
             //auto add role if not exists
-            $this->rbac->roles->add($child);
+            $this->rbac->addRole($child);
         }
 
         $this->children[] = $child;
-        $this->rbac->roles->get($child)->addParent($this);
+        $this->rbac->getRole($child)->addParent($this);
     }
 
 
@@ -107,20 +110,20 @@ class Role
             throw new Exception("Cyclic role inheritance detected: {$parent} -> {$this->name}");
         }
 
-        if (!$this->rbac->roles->has($parent)) {
+        if (!$this->rbac->hasRole($parent)) {
             //auto add role if not exists
-            $this->rbac->roles->add($parent);
+            $this->rbac->addRole($parent);
         }
 
         $this->parents[] = $parent;
-        $this->rbac->roles->get($parent)->addChild($this);
+        $this->rbac->getRole($parent)->addChild($this);
     }
 
     function getParents()
     {
         $parents = [];
         foreach ($this->parents as $parent) {
-            $parents[] = $this->rbac->roles->get($parent);
+            $parents[] = $this->rbac->getRole($parent);
         }
         return $parents;
     }
@@ -129,7 +132,7 @@ class Role
     {
         $children = [];
         foreach ($this->children as $child) {
-            $children[] = $this->rbac->roles->get($child);
+            $children[] = $this->rbac->getRole($child);
         }
         return $children;
     }
@@ -175,7 +178,7 @@ class Role
             unset($this->children[$key]);
         }
 
-        if ($c = $this->rbac->roles->get($child)) {
+        if ($c = $this->rbac->getRole($child)) {
             $c->removeParent($this);
         }
     }
@@ -191,7 +194,7 @@ class Role
             unset($this->parents[$key]);
         }
 
-        if ($c = $this->rbac->roles->get($parent)) {
+        if ($c = $this->rbac->getRole($parent)) {
             $c->removeChild($this);
         }
     }

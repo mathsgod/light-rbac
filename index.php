@@ -5,21 +5,13 @@ use Light\Rbac\Rbac;
 require_once 'vendor/autoload.php';
 
 $rbac = new Rbac;
-$everyone = $rbac->addRole("everyone");
-$everyone->addPermission("user", "view");
+$rbac = new Light\Rbac\Rbac;
+$admin = $rbac->addRole("admin");
+$admin->addChild("editor");
 
-$admin = $rbac->addRole("administrators");
-$admin->addPermission("user", "create");
-$admin->addPermission("user", "update");
-
-$admin->addChild("everyone");
-$admin->addChild("everyone_1");
-
-$user = $rbac->addUser("admin", ["administrators"]);
+$rbac->getRole("editor")->addPermission("post", "create");
 
 
-print_r($rbac->getRoles());
 
+print_R($admin->can("post", "create"));
 
-    /* 
-print_R($admin->getPermissions()) */;

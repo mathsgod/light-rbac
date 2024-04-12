@@ -49,4 +49,29 @@ if ($user->can('post', 'read')) {
 }
 ```
 
+### Checking Roles
+
+To check if a user has a certain role, use the `hasRole` method of the `User` class.
+
+```php
+$user = $rbac->addUser('John Doe', ['admin']);
+if ($user->hasRole('admin')) {
+    echo 'John Doe is an admin.';
+}
+```
+
+### Hierarchical Roles
+
+```php
+$admin = $rbac->addRole('admin');
+$admin->addChild('editor');
+
+$rbac->getRole('editor')->addPermission('post', 'read');
+
+if($admin->can('post', 'read')) {
+    echo 'Admin can read posts.';
+}
+
+
+```
 
