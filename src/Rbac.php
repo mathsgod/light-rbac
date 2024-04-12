@@ -53,6 +53,11 @@ class Rbac
         return $this->roles->has($name);
     }
 
+    public function hasUser(string $name)
+    {
+        return $this->users->has($name);
+    }
+
     public function getUsers()
     {
         return $this->users->all();
