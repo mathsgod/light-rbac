@@ -47,7 +47,7 @@ class Role
         }
 
 
-        foreach ($this->getChild() as $child) {
+        foreach ($this->getChildren() as $child) {
             if ($child->can($permission)) {
                 return true;
             }
@@ -72,7 +72,7 @@ class Role
         $permissions = $this->permissions;
 
         if ($children) {
-            foreach ($this->getChild() as $child) {
+            foreach ($this->getChildren() as $child) {
                 foreach ($child->getPermissions() as $permission) {
                     $permissions[] = $permission;
                 }
@@ -138,7 +138,7 @@ class Role
         return $parents;
     }
 
-    function getChild()
+    function getChildren()
     {
         $children = [];
         foreach ($this->children as $child) {
@@ -168,7 +168,7 @@ class Role
             return true;
         }
 
-        foreach ($this->getChild() as $child) {
+        foreach ($this->getChildren() as $child) {
             if ($child->hasDescendant($role)) {
                 return true;
             }
