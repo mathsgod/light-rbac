@@ -6,11 +6,22 @@ class Rbac
 {
     protected $roles = null;
     protected $users = null;
+    protected $permission_separator = '.';
 
     public function __construct()
     {
         $this->roles = new RoleManager($this);
         $this->users = new UserManager($this);
+    }
+
+    public function setPermissionSeparator(string $separator)
+    {
+        $this->permission_separator = $separator;
+    }
+
+    public function getPermissionSeparator()
+    {
+        return $this->permission_separator;
     }
 
     public function addUser(string $name, array $roles = []): User

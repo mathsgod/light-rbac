@@ -93,6 +93,7 @@ class User
 
     public function can(string $permission)
     {
+        $permission_seprator  = $this->rbac->getPermissionSeparator();
         if (in_array("*", $this->permissions)) {
             return true;
         }
@@ -101,12 +102,12 @@ class User
             return true;
         }
 
-        //split $permission by :
-        $parts = explode(":", $permission);
+        //split $permission by $permission_seprator
+        $parts = explode($permission_seprator, $permission);
 
         while (count($parts) > 1) {
             array_pop($parts);
-            if (in_array(implode(":", $parts) . ":*", $this->permissions)) {
+            if (in_array(implode($permission_seprator, $parts) . $permission_seprator . "*", $this->permissions)) {
                 return true;
             }
         }

@@ -51,6 +51,7 @@ final class RoleTest extends TestCase
     public function testPermissions(): void
     {
         $rbac = new Light\Rbac\Rbac;
+        $rbac->setPermissionSeparator(':');
         $role = $rbac->addRole("admin");
         $role->addPermission("post:create");
         $role->addPermission("post:read");
@@ -63,6 +64,7 @@ final class RoleTest extends TestCase
     public function testAstriskPermissions(): void
     {
         $rbac = new Light\Rbac\Rbac;
+        $rbac->setPermissionSeparator(':');
         $role = $rbac->addRole("admin");
         $role->addPermission("*"); // all permissions
         $this->assertTrue($role->can("postcreate"));

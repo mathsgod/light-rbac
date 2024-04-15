@@ -41,17 +41,17 @@ final class UserTest extends TestCase
     {
         $rbac = new Light\Rbac\Rbac;
         $role = $rbac->addRole("administrators");
-        $role->addPermission("user", "create");
-        $role->addPermission("user", "read");
-        $role->addPermission("user", "update");
-        $role->addPermission("user", "delete");
+        $role->addPermission("user.create");
+        $role->addPermission("user.read");
+        $role->addPermission("user.update");
+        $role->addPermission("user.delete");
 
         $rbac->addUser("admin", ["administrators"]);
 
         $user = $rbac->getUser("admin");
         $this->assertTrue($user->is("administrators"));
 
-        $this->assertTrue($user->can("user", "create"));
+        $this->assertTrue($user->can("user.create"));
     }
 
     public function testHasRole(): void
@@ -83,11 +83,11 @@ final class UserTest extends TestCase
         $admin = $rbac->addRole("administrators");
         $admin->addChild("editors");
 
-        $rbac->getRole("editors")->addPermission("post", "create");
+        $rbac->getRole("editors")->addPermission("post.create");
 
         $rbac->addUser("admin", ["administrators"]);
 
         $user = $rbac->getUser("admin");
-        $this->assertTrue($user->can("post", "create"));
+        $this->assertTrue($user->can("post.create"));
     }
 }
