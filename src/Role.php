@@ -186,10 +186,9 @@ class Role
         $key = array_search($child, $this->children);
         if ($key !== false) {
             unset($this->children[$key]);
-        }
-
-        if ($c = $this->rbac->getRole($child)) {
-            $c->removeParent($this);
+            if ($c = $this->rbac->getRole($child)) {
+                $c->removeParent($this);
+            }
         }
     }
 
@@ -202,10 +201,9 @@ class Role
         $key = array_search($parent, $this->parents);
         if ($key !== false) {
             unset($this->parents[$key]);
-        }
-
-        if ($c = $this->rbac->getRole($parent)) {
-            $c->removeChild($this);
+            if ($c = $this->rbac->getRole($parent)) {
+                $c->removeChild($this);
+            }
         }
     }
 

@@ -61,6 +61,30 @@ final class RoleTest extends TestCase
         $this->assertTrue($role->can("post:create"));
     }
 
+    public function testRemoveChild(): void
+    {
+        $rbac = new Light\Rbac\Rbac;
+        $admin = $rbac->addRole("admin");
+        $admin->addChild("editor");
+
+        $admin->removeChild("editor");
+
+        $this->assertEmpty($admin->children);
+        $this->assertEmpty($rbac->getRole("editor")->parents);
+    }
+
+    public function testRemoveParent(): void
+    {
+        $rbac = new Light\Rbac\Rbac;
+        $admin = $rbac->addRole("admin");
+        $admin->addChild("editor");
+
+        $rbac->getRole("editor")->removeParent("admin");
+
+        $this->assertEmpty($admin->children);
+        $this->assertEmpty($rbac->getRole("editor")->parents);
+    }
+
     public function testAstriskPermissions(): void
     {
         $rbac = new Light\Rbac\Rbac;
