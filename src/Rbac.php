@@ -6,7 +6,7 @@ class Rbac
 {
     protected RoleManager $roles;
     protected UserManager $users;
-    protected string $permission_separator = '.';
+    protected string $permission_separator = ':';
 
     public function __construct()
     {

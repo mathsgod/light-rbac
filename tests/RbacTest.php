@@ -18,7 +18,6 @@ final class RbacTest extends TestCase
     public function testGetPermissions()
     {
         $rbac = new Light\Rbac\Rbac;
-        $rbac->setPermissionSeparator(':');
         $role = $rbac->addRole("admin");
         $role->addPermission("post:create");
         $role->addPermission("post:read");
@@ -97,9 +96,9 @@ final class RbacTest extends TestCase
     public function testGetPermissionSeparator(): void
     {
         $rbac = new Light\Rbac\Rbac;
-        $this->assertEquals(".", $rbac->getPermissionSeparator());
-        $rbac->setPermissionSeparator(":");
         $this->assertEquals(":", $rbac->getPermissionSeparator());
+        $rbac->setPermissionSeparator(".");
+        $this->assertEquals(".", $rbac->getPermissionSeparator());
     }
 
     public function testGetPermissionsIncludesUserDirectPermissions(): void
