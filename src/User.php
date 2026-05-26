@@ -7,10 +7,10 @@ use Exception;
 class User
 {
     private Rbac $rbac;
-    public  $name;
+    public readonly string $name;
 
-    public $roles = [];
-    public $permissions = [];
+    public array $roles = [];
+    public array $permissions = [];
 
     public function __construct(Rbac $rbac, string $name)
     {
@@ -18,12 +18,13 @@ class User
         $this->name = $name;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getRoles()
+    /** @return Role[] */
+    public function getRoles(): array
     {
         $roles = [];
         foreach ($this->roles as $role) {
@@ -34,13 +35,13 @@ class User
         return $roles;
     }
 
-    public function addPermission(string $action)
+    public function addPermission(string $action): void
     {
         $this->permissions[] = $action;
         $this->permissions = array_unique($this->permissions);
     }
 
-    public function is(string $role)
+    public function is(string $role): bool
     {
         if (in_array($role, $this->roles)) {
             return true;
@@ -54,12 +55,12 @@ class User
         return false;
     }
 
-    public function hasRole(string $role)
+    public function hasRole(string $role): bool
     {
         return in_array($role, $this->roles);
     }
 
-    public function addRole(Role|string $role)
+    public function addRole(Role|string $role): static
     {
         if ($role instanceof Role) {
             $role = $role->getName();
@@ -78,7 +79,7 @@ class User
         return $this;
     }
 
-    public function removeRole(Role|string $role)
+    public function removeRole(Role|string $role): static
     {
         if ($role instanceof Role) {
             $role = $role->getName();
@@ -91,7 +92,7 @@ class User
         return $this;
     }
 
-    public function can(string $permission)
+    public function can(string $permission): bool
     {
         $permission_seprator  = $this->rbac->getPermissionSeparator();
         if (in_array("*", $this->permissions)) {
@@ -121,7 +122,8 @@ class User
         return false;
     }
 
-    public function getPermissions(bool $includeRoles = true)
+    /** @return string[] */
+    public function getPermissions(bool $includeRoles = true): array
     {
         $permissions = $this->permissions;
 
@@ -136,7 +138,7 @@ class User
         return array_values(array_unique($permissions));
     }
 
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
             'name' => $this->name,

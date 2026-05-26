@@ -5,14 +5,14 @@ namespace Light\Rbac;
 class UserManager
 {
     protected Rbac $rbac;
-    protected $users = [];
+    protected array $users = [];
 
     public function __construct(Rbac $rbac)
     {
         $this->rbac = $rbac;
     }
 
-    public function add(string $name)
+    public function add(string $name): void
     {
         if ($name == "") {
             throw new \Exception("User name cannot be empty");
@@ -21,7 +21,7 @@ class UserManager
         $this->users[$name] = new User($this->rbac, $name);
     }
 
-    public function has(string $name)
+    public function has(string $name): bool
     {
         return isset($this->users[$name]);
     }
@@ -34,15 +34,13 @@ class UserManager
         return null;
     }
 
-    /**
-     * @return User[]
-     */
-    public function all()
+    /** @return User[] */
+    public function all(): array
     {
         return array_values($this->users);
     }
 
-    public function remove(string $name)
+    public function remove(string $name): void
     {
         unset($this->users[$name]);
     }

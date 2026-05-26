@@ -7,11 +7,11 @@ use Exception;
 class Role
 {
     private Rbac $rbac;
-    public  $name;
+    public readonly string $name;
 
-    public $parents = [];
-    public $children = [];
-    public $permissions = [];
+    public array $parents = [];
+    public array $children = [];
+    public array $permissions = [];
 
     public function __construct(Rbac $rbac, string $name)
     {
@@ -19,12 +19,12 @@ class Role
         $this->name = $name;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function can(string $permission)
+    public function can(string $permission): bool
     {
         $permission_seprator  = $this->rbac->getPermissionSeparator();
 
@@ -56,18 +56,19 @@ class Role
         return false;
     }
 
-    public function hasPermission(string $permission)
+    public function hasPermission(string $permission): bool
     {
         return in_array($permission, $this->permissions);
     }
 
-    public function addPermission(string $permission)
+    public function addPermission(string $permission): void
     {
         $this->permissions[] = $permission;
         $this->permissions = array_unique($this->permissions);
     }
 
-    public function getPermissions(bool $children = true)
+    /** @return string[] */
+    public function getPermissions(bool $children = true): array
     {
         $permissions = $this->permissions;
 
@@ -82,7 +83,7 @@ class Role
         return array_values(array_unique($permissions));
     }
 
-    public function addChild(Role|string $child)
+    public function addChild(Role|string $child): void
     {
         if ($child instanceof Role) {
             $child = $child->getName();
@@ -102,11 +103,11 @@ class Role
         }
 
         $this->children[] = $child;
-        $this->rbac->getRole($child)->addParent($this);
+        $this->rbac->getRole($child)?->addParent($this);
     }
 
 
-    public function addParent(Role|string $parent)
+    public function addParent(Role|string $parent): void
     {
         if ($parent instanceof Role) {
             $parent = $parent->getName();
@@ -126,10 +127,11 @@ class Role
         }
 
         $this->parents[] = $parent;
-        $this->rbac->getRole($parent)->addChild($this);
+        $this->rbac->getRole($parent)?->addChild($this);
     }
 
-    function getParents()
+    /** @return Role[] */
+    public function getParents(): array
     {
         $parents = [];
         foreach ($this->parents as $parent) {
@@ -138,7 +140,8 @@ class Role
         return $parents;
     }
 
-    function getChildren()
+    /** @return Role[] */
+    public function getChildren(): array
     {
         $children = [];
         foreach ($this->children as $child) {
@@ -147,7 +150,7 @@ class Role
         return $children;
     }
 
-    function hasAncestor(string $role): bool
+    public function hasAncestor(string $role): bool
     {
         if (in_array($role, $this->parents)) {
             return true;
@@ -162,7 +165,7 @@ class Role
         return false;
     }
 
-    function hasDescendant(string $role): bool
+    public function hasDescendant(string $role): bool
     {
         if (in_array($role, $this->children)) {
             return true;
@@ -177,7 +180,7 @@ class Role
         return false;
     }
 
-    function removeChild(Role|string $child)
+    public function removeChild(Role|string $child): void
     {
         if ($child instanceof Role) {
             $child = $child->getName();
@@ -192,7 +195,7 @@ class Role
         }
     }
 
-    function removeParent(Role|string $parent)
+    public function removeParent(Role|string $parent): void
     {
         if ($parent instanceof Role) {
             $parent = $parent->getName();
@@ -207,8 +210,7 @@ class Role
         }
     }
 
-
-    function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
             'name' => $this->name,

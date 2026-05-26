@@ -5,13 +5,14 @@ namespace Light\Rbac;
 class RoleManager
 {
     private Rbac $rbac;
-    private $roles = [];
+    private array $roles = [];
+
     public function __construct(Rbac $rbac)
     {
         $this->rbac = $rbac;
     }
 
-    public function remove(string $name)
+    public function remove(string $name): void
     {
         unset($this->roles[$name]);
         foreach ($this->roles as $role) {
@@ -23,7 +24,7 @@ class RoleManager
         }
     }
 
-    public function add(string $name)
+    public function add(string $name): void
     {
         //empty name
         if ($name == "") {
@@ -33,7 +34,7 @@ class RoleManager
         $this->roles[$name] = new Role($this->rbac, $name);
     }
 
-    public function has(string $name)
+    public function has(string $name): bool
     {
         return isset($this->roles[$name]);
     }
@@ -46,10 +47,8 @@ class RoleManager
         return null;
     }
 
-    /**
-     * @return Role[]
-     */
-    public function all()
+    /** @return Role[] */
+    public function all(): array
     {
         return array_values($this->roles);
     }
