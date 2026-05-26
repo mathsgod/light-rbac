@@ -1,43 +1,40 @@
 # Light RBAC
 
-Light RBAC is a simple Role-Based Access Control (RBAC) system implemented in PHP.
+Light RBAC is a simple and lightweight Role-Based Access Control (RBAC) library for PHP.
 
-## Class: Rbac
+## Requirements
 
-The `Rbac` class is the main class of the system. It manages roles and users.
+- PHP >= 8.3
 
-### Properties
+## Installation
 
-- `$roles`: An instance of `RoleManager` that manages all roles in the system.
-- `$users`: An instance of `UserManager` that manages all users in the system.
+```bash
+composer require mathsgod/light-rbac
+```
 
-### Methods
-
-- `addUser(string $name, array $roles = []): User`: Adds a user with the given name and roles to the system. If the user already exists, it adds the roles to the existing user.
-- `addRole(string $name)`: Adds a role with the given name to the system. If the role already exists, it returns the existing role.
-- `getRole(string $name)`: Returns the role with the given name.
-- `removeRole(string $name)`: Removes the role with the given name from the system.
-- `getUser(string $name)`: Returns the user with the given name. 
-- `removeUser(string $name)`: Removes the user with the given name from the system.
-- `getPermissions(): array`: Returns all permissions in the system.
-
-
-## Usage
-
-First, create an instance of the `Rbac` class. Then, use the `addUser` and `addRole` methods to add users and roles to the system. Use the `getRole` method to retrieve a role by its name.
+## Quick Start
 
 ```php
 $rbac = new \Light\Rbac\Rbac();
-$rbac->addRole('admin');
-$rbac->addUser('John Doe', ['admin']);
 
-$admin = $rbac->getRole('admin');
+$role = $rbac->addRole('admin');
+$role->addPermission('post:read');
+$role->addPermission('post:write');
+
+$user = $rbac->addUser('John Doe', ['admin']);
+
+if ($user->can('post:read')) {
+    echo 'John Doe can read posts.';
+}
 ```
 
+---
 
-### Permissions
+## Permissions
 
-Permissions can be assigned to roles. A permission is a string that represents a certain action or resource. For example, `post:read`, `post:write`, `post:delete`, etc.
+Permissions are strings in the format `resource:action`, e.g. `post:read`, `post:write`, `post:delete`.
+
+The default separator is `:`. You can change it with `setPermissionSeparator()`.
 
 ```php
 $role = $rbac->addRole('admin');
@@ -45,54 +42,46 @@ $role->addPermission('post:read');
 $role->addPermission('post:write');
 ```
 
-### Checking Permissions
+### Wildcard Permissions
 
-To check if a user has a certain permission, use the `can` method of the `User` class.
-
-```php
-$user = $rbac->addUser('John Doe', ['admin']);
-if ($user->can('post:read')) {
-    echo 'John Doe can read posts.';
-}
-```
-
-### Asterisk Permission
-
-You can use the asterisk `*` to represent all permissions.
+Use `*` to grant all permissions:
 
 ```php
-$role = $rbac->addRole('admin');
 $role->addPermission('*');
 
-if ($role->can('post:read')) {
-    echo 'Admin can read posts.';
-}
+$role->can('post:read');   // true
+$role->can('anything');    // true
 ```
 
-You can also use the asterisk 'resource:*' to represent all permissions for a specific resource.
+Use `resource:*` to grant all actions on a specific resource:
 
 ```php
-$role = $rbac->addRole('admin');
 $role->addPermission('post:*');
 
-if ($role->can('post:read')) {
-    echo 'Admin can read posts.';
-}
+$role->can('post:read');   // true
+$role->can('post:delete'); // true
+$role->can('user:read');   // false
 ```
 
+---
 
-### Checking Roles
+## Roles
 
-To check if a user has a certain role, use the `hasRole` method of the `User` class.
+### Adding and Retrieving Roles
 
 ```php
-$user = $rbac->addUser('John Doe', ['admin']);
-if ($user->hasRole('admin')) {
-    echo 'John Doe is an admin.';
-}
+$rbac->addRole('admin');
+$rbac->addRole('editor');
+
+$rbac->getRole('admin');    // returns Role object
+$rbac->getRoles();          // returns all Role objects
+$rbac->hasRole('admin');    // true
+$rbac->removeRole('admin');
 ```
 
 ### Hierarchical Roles
+
+A parent role inherits all permissions from its child roles.
 
 ```php
 $admin = $rbac->addRole('admin');
@@ -100,10 +89,88 @@ $admin->addChild('editor');
 
 $rbac->getRole('editor')->addPermission('post:read');
 
-if($admin->can('post:read')) {
-    echo 'Admin can read posts.';
-}
+$admin->can('post:read'); // true — inherited from child
+```
 
+Multi-level hierarchies are supported:
 
+```php
+$admin->addChild('editor');
+$rbac->getRole('editor')->addChild('viewer');
+$rbac->getRole('viewer')->addPermission('post:read');
+
+$admin->can('post:read'); // true
+```
+
+Cyclic inheritance is detected and throws an `Exception`:
+
+```php
+$admin->addChild('editor');
+$rbac->getRole('editor')->addChild('admin'); // throws Exception
+```
+
+---
+
+## Users
+
+### Adding and Retrieving Users
+
+```php
+$user = $rbac->addUser('John Doe', ['admin', 'editor']);
+
+$rbac->getUser('John Doe');  // returns User object
+$rbac->getUsers();           // returns all User objects
+$rbac->hasUser('John Doe'); // true
+$rbac->removeUser('John Doe');
+```
+
+### Checking Permissions
+
+```php
+$user->can('post:read');  // checks via assigned roles
+```
+
+Users can also have direct permissions independent of roles:
+
+```php
+$user->addPermission('report:view');
+$user->can('report:view'); // true
+```
+
+### Checking Roles
+
+```php
+$user->hasRole('admin');  // true if directly assigned
+$user->is('admin');       // true if directly assigned OR inherited via hierarchy
+```
+
+```php
+$admin = $rbac->addRole('admin');
+$admin->addChild('editor');
+
+$user = $rbac->addUser('John Doe', ['admin']);
+$user->is('editor'); // true — inherited via hierarchy
+```
+
+### Fluent Interface
+
+`addRole()` and `removeRole()` on `User` return `static` for chaining:
+
+```php
+$user->addRole('admin')->addRole('editor');
+$user->removeRole('editor');
+```
+
+---
+
+## Custom Permission Separator
+
+The default separator is `:`. You can change it if needed:
+
+```php
+$rbac->setPermissionSeparator('/');
+
+$role->addPermission('post/*');
+$role->can('post/read'); // true
 ```
 
