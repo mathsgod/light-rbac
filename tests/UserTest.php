@@ -90,4 +90,107 @@ final class UserTest extends TestCase
         $user = $rbac->getUser("admin");
         $this->assertTrue($user->can("post.create"));
     }
+
+    public function testRemoveRole(): void
+    {
+        $rbac = new Light\Rbac\Rbac;
+        $rbac->addRole("admin");
+        $user = $rbac->addUser("alice", ["admin"]);
+
+        $user->removeRole("admin");
+
+        $this->assertFalse($user->hasRole("admin"));
+    }
+
+    public function testAddRoleAsObject(): void
+    {
+        $rbac = new Light\Rbac\Rbac;
+        $role = $rbac->addRole("admin");
+        $user = $rbac->addUser("alice");
+
+        $user->addRole($role);
+
+        $this->assertTrue($user->hasRole("admin"));
+    }
+
+    public function testDuplicateRoleNotDuplicated(): void
+    {
+        $rbac = new Light\Rbac\Rbac;
+        $rbac->addRole("admin");
+        $user = $rbac->addUser("alice");
+        $user->addRole("admin");
+        $user->addRole("admin");
+
+        $this->assertCount(1, $user->roles);
+    }
+
+    public function testGetRoles(): void
+    {
+        $rbac = new Light\Rbac\Rbac;
+        $rbac->addRole("admin");
+        $rbac->addRole("editor");
+        $user = $rbac->addUser("alice", ["admin", "editor"]);
+
+        $roles = $user->getRoles();
+        $this->assertCount(2, $roles);
+        $this->assertInstanceOf(Light\Rbac\Role::class, $roles[0]);
+    }
+
+    public function testUserDirectPermission(): void
+    {
+        $rbac = new Light\Rbac\Rbac;
+        $user = $rbac->addUser("alice");
+        $user->addPermission("post:read");
+
+        $this->assertTrue($user->can("post:read"));
+        $this->assertFalse($user->can("post:write"));
+    }
+
+    public function testUserCanWithWildcard(): void
+    {
+        $rbac = new Light\Rbac\Rbac;
+        $user = $rbac->addUser("alice");
+        $user->addPermission("*");
+
+        $this->assertTrue($user->can("post:read"));
+        $this->assertTrue($user->can("anything"));
+    }
+
+    public function testUserCanWithResourceWildcard(): void
+    {
+        $rbac = new Light\Rbac\Rbac;
+        $rbac->setPermissionSeparator(':');
+        $user = $rbac->addUser("alice");
+        $user->addPermission("post:*");
+
+        $this->assertTrue($user->can("post:read"));
+        $this->assertTrue($user->can("post:write"));
+        $this->assertFalse($user->can("user:read"));
+    }
+
+    public function testGetPermissionsIncludesRolePermissions(): void
+    {
+        $rbac = new Light\Rbac\Rbac;
+        $role = $rbac->addRole("admin");
+        $role->addPermission("post:read");
+        $user = $rbac->addUser("alice", ["admin"]);
+        $user->addPermission("user:read");
+
+        $permissions = $user->getPermissions(true);
+        $this->assertContains("post:read", $permissions);
+        $this->assertContains("user:read", $permissions);
+    }
+
+    public function testGetPermissionsWithoutRoles(): void
+    {
+        $rbac = new Light\Rbac\Rbac;
+        $role = $rbac->addRole("admin");
+        $role->addPermission("post:read");
+        $user = $rbac->addUser("alice", ["admin"]);
+        $user->addPermission("user:read");
+
+        $permissions = $user->getPermissions(false);
+        $this->assertNotContains("post:read", $permissions);
+        $this->assertContains("user:read", $permissions);
+    }
 }
